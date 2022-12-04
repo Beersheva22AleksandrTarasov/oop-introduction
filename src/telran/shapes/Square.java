@@ -6,4 +6,6 @@ public class Square extends Rectangle {
 		super(width, width);
 	}
 	
+	
+	
 }

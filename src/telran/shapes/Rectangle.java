@@ -50,4 +50,5 @@ public class Rectangle {
 		
 		return " ".repeat(offset);
 	}
+	
 }
