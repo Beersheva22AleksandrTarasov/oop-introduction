@@ -40,11 +40,13 @@ class ShapeTests {
 	}
 
 	@Test
+	@Disabled
 	void triangleTest() {
 		int width = 10;
-		
+
 		SquareLeftTriangle leftTriangle = new SquareLeftTriangle(width);
 		SquareRightTriangle rightTriangle = new SquareRightTriangle(width);
+
 		displayStrings(leftTriangle.presentation(20));
 		displayStrings(rightTriangle.presentation(20));
 		SquareLeftTriangle.setSymbol("$");
@@ -52,8 +54,25 @@ class ShapeTests {
 		rightTriangle.setHeight(5);
 		displayStrings(leftTriangle.presentation(20));
 		displayStrings(rightTriangle.presentation(20));
-		
-		
+
 	}
 	
+	@Test
+	void shapesTest() {
+		Shape rectangle = new Rectangle(10, 15);
+		Shape square = new Square(10);
+		Shape squareLeftTriangle = new SquareLeftTriangle(20);
+		Shape squareRightTriangle = new SquareRightTriangle(20);
+		
+		Shape[] shapes = {rectangle, square, squareLeftTriangle, squareRightTriangle};
+		Canvas forms = new Canvas(5, 7, shapes);
+		
+		displayStrings(forms.presentation(15));
+		forms.setMargin(2);
+		forms.setDirection("column");
+		displayStrings(forms.presentation(15));
+		forms.setDirection("row");
+		displayStrings(forms.presentation(15));
+	}
+
 }
