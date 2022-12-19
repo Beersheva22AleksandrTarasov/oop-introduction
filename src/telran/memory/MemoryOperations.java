@@ -1,7 +1,7 @@
 package telran.memory;
 
 public class MemoryOperations {
-	public static int getMaxAvaibleMemory() {
+	public static int getMaxAvaibleMemory1() {
 		int res = Integer.MAX_VALUE;
 		boolean running = true;
 		byte ar[] = null;
@@ -37,5 +37,25 @@ public class MemoryOperations {
 
 		return res;
 	}
-
+	public static int getMaxAvaibleMemory() {
+		
+		int minMemory = 0;
+		int maxMemory = Integer.MAX_VALUE;
+		int middle = maxMemory / 2;
+		int maxAvailable = 0;
+		
+		while(minMemory <= maxMemory) {
+			try {
+				byte ar[] = new byte[middle];
+				maxAvailable = middle;
+				minMemory = middle + 1;
+				
+			} catch (Throwable e) {
+				maxMemory = middle - 1;
+				
+			}
+			middle = minMemory + (maxMemory - minMemory) / 2;
+		}
+		return maxAvailable;
+	}
 }
