@@ -13,7 +13,7 @@ public class Rectangle extends Shape {
 		String line = getLine(offset);
 		result[0] = line;
 		int lastLine = getHeight() - 1;
-		result[lastLine] = line;
+		result[lastLine] = getOffset(offset) + line;
 		for (int i = 1; i < lastLine; i++) {
 			result[i] = this.getMiddleLine(offset);
 		}
@@ -28,6 +28,10 @@ public class Rectangle extends Shape {
 	protected String getLine(int offset) {
 
 		return symbol.repeat(getWidth());
+	}
+	
+	protected String getOffset(int offset) {
+		return " ".repeat(offset);
 	}
 
 }

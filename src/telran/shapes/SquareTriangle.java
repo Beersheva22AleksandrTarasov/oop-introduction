@@ -14,16 +14,16 @@ public class SquareTriangle extends Square {
 
 		String res[] = new String[getWidth()];
 		String line = getLine(offset);
-		res[0] = isLeftDiagonal ? symbol + getOffset(getWidth() - 1) : getOffset(getWidth() - 1) + symbol;
+		res[0] = isLeftDiagonal ? getOffset(offset) + symbol + getOffset(getWidth() - 1)
+				: getOffset(offset) + getOffset(getWidth() - 1) + symbol;
 
 		int lastLine = getHeight() - 1;
-		res[lastLine] = line;
-		
+		res[lastLine] = getOffset(offset) + line;
+
 		for (int i = 1; i < lastLine; i++) {
 			res[i] = isLeftDiagonal ? getMiddleLineLeft(offset, i) : getMiddleLineRight(offset, i);
 		}
 
-		
 		return res;
 	}
 
@@ -34,5 +34,4 @@ public class SquareTriangle extends Square {
 	private String getMiddleLineRight(int offset, int i) {
 		return getOffset(offset) + getOffset(getWidth() - (i + 1)) + symbol + getOffset(i - 1) + symbol;
 	}
-
 }

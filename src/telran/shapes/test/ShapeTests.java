@@ -56,23 +56,35 @@ class ShapeTests {
 		displayStrings(rightTriangle.presentation(20));
 
 	}
-	
+	Shape[] shapes = { new Rectangle(10, 3), new Square(10), new SquareLeftTriangle(10), new SquareRightTriangle(10)};
+	Canvas canvas = new Canvas(10, 20, shapes);
+	Canvas canvas1 = new Canvas(5, 15, shapes);
+	Canvas canvas2 = new Canvas(15, 25, shapes);
+
 	@Test
-	void shapesTest() {
-		Shape rectangle = new Rectangle(10, 15);
-		Shape square = new Square(10);
-		Shape squareLeftTriangle = new SquareLeftTriangle(20);
-		Shape squareRightTriangle = new SquareRightTriangle(20);
-		
-		Shape[] shapes = {rectangle, square, squareLeftTriangle, squareRightTriangle};
-		Canvas forms = new Canvas(5, 7, shapes);
-		
-		displayStrings(forms.presentation(15));
-		forms.setMargin(2);
-		forms.setDirection("column");
-		displayStrings(forms.presentation(15));
-		forms.setDirection("row");
-		displayStrings(forms.presentation(15));
+	@Disabled
+	void canvasInRowTest() {
+		Canvas canvas = new Canvas(10, 4, shapes);
+		canvas.setMargin(3);
+		displayStrings(canvas.presentation(2));
+		Shape[] shapes = { new Rectangle(10, 3), new Square(10), canvas1};
+		Canvas canvas1 = new Canvas(10, 4, shapes);
+		canvas1.setMargin(5);
+		displayStrings(canvas1.presentation(1));
 	}
 
+	@Test
+//	@Disabled
+	void canvasInColumnTest() {
+		Canvas canvas = new Canvas(10, 4, shapes);
+		canvas.setDirection("column");
+		this.canvas.setDirection("column");
+		canvas.setMargin(1);
+		displayStrings(canvas.presentation(2));
+		Shape[] shapes = { new Rectangle(10, 3), new Square(10), canvas2};
+		Canvas canvas2 = new Canvas(10, 4, shapes);
+		canvas2.setMargin(1);
+		displayStrings(canvas2.presentation(3));
+
+	}
 }

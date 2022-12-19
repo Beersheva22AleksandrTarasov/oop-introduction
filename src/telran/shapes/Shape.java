@@ -36,9 +36,5 @@ public abstract class Shape {
 		this.height = height;
 	}
 
-	protected String getOffset(int offset) {
-		return " ".repeat(offset);
-	}
-
 	abstract public String[] presentation(int offset);
 }

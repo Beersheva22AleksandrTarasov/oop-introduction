@@ -13,79 +13,63 @@ public class Canvas extends Shape {
 
 	}
 
-	private void changeHeight(int height, Shape[] shapes) {
-		for (Shape form : shapes) {
-			form.setHeight(height);
-		}
+	@Override
+	public int getHeight() {
+		return direction.equals("row") ? super.getHeight() : (heightsSum() + margin * (shapes.length - 1));
 	}
 
-	private void changeWidth(int width, Shape[] shapes) {
-		for (Shape form : shapes) {
-			form.setWidth(width);
+	private int heightsSum() {
+		int sum = 0;
+		for (Shape shape : shapes) {
+			sum += shape.getHeight();
 		}
+		return sum;
 	}
 
 	@Override
 	public String[] presentation(int offset) {
 
-		String[] resultArray;
-		Shape[] copyArrayShapes = shapes.clone();
+		return direction.equals("row") ? presentationInRow(offset) : presentationInColumn(offset);
+	}
 
-		if (direction == "row") {
+	private String[] presentationInColumn(int offset) {
+		String res[] = new String[heightsSum() + (shapes.length - 1) * margin];
+		Arrays.fill(res, " ".repeat(getWidth()));
+		int length = mergeLines(0, res, getPresentation(0, offset));
+		for (int i = 1; i < shapes.length; i++) {
+			length = mergeLines(length + margin, res, getPresentation(i, offset));
+		}
+		return res;
+	}
 
-			changeHeight(getHeight(), copyArrayShapes);
-			resultArray = new String[getHeight()];
-			Arrays.fill(resultArray, getOffset(offset));
-			buildShapesRow(resultArray, copyArrayShapes, offset);
+	private int mergeLines(int length, String[] res, String[] shapePresentation) {
+		System.arraycopy(shapePresentation, 0, res, length, shapePresentation.length);
+		return length + shapePresentation.length;
+	}
 
+	private String[] presentationInRow(int offset) {
+		String[] res = getPresentation(0, offset);
+		for (int i = 1; i < shapes.length; i++) {
+			res = join(res, getPresentation(i, margin));
+		}
+		return res;
+	}
+
+	private String[] join(String[] res, String[] cur) {
+		String[] joinRes = new String[res.length];
+		for (int i = 0; i < joinRes.length; i++) {
+			joinRes[i] = res[i] + cur[i];
+		}
+		return joinRes;
+	}
+
+	private String[] getPresentation(int shapeIndex, int offset) {
+		if (direction.equals("row")) {
+			shapes[shapeIndex].setHeight(getHeight());
 		} else {
-			
-			changeWidth(getWidth(), copyArrayShapes);
-			resultArray = new String[getHeightAllShapes(copyArrayShapes) + (copyArrayShapes.length - 1)];
-			Arrays.fill(resultArray, getOffset(offset));
-			buildShapesColumn(resultArray, copyArrayShapes, offset);
-
+			shapes[shapeIndex].setWidth(getWidth());
 		}
-
-		return resultArray;
-	}
-
-	private void buildShapesColumn(String[] resultArray, Shape[] shapes, int offset) {
-		int value = 0;
-		for (Shape form : shapes) {
-			String[] helperForColumn = form.presentation(0);
-			int formLength = helperForColumn.length;
-
-			for (int i = 0; i < formLength; i++, value++) {
-				resultArray[value] += helperForColumn[i];
-			}
-			if (form != shapes[shapes.length - 1]) {
-				resultArray[value++] = setSpaceOrEnter();
-			}
-		}
-
-	}
-
-	private void buildShapesRow(String[] result, Shape[] shapes, int offset) {
-		for (Shape form : shapes) {
-			String[] helperForRow = form.presentation(0);
-			for (int i = 0; i < getHeight(); i++) {
-				result[i] += (form.equals(shapes[shapes.length - 1])) ? helperForRow[i]
-						: helperForRow[i] + setSpaceOrEnter();
-			}
-		}
-	}
-
-	private int getHeightAllShapes(Shape[] shapes) {
-		int result = 0;
-		for (Shape form : shapes) {
-			result += form.getHeight();
-		}
-		return result;
-	}
-
-	private String setSpaceOrEnter() {
-		return direction == "row" ? getOffset(margin) : "\n".repeat(margin - 1);
+		return shapes[shapeIndex].presentation(offset);
 	}
 
 	public String getDirection() {
@@ -93,7 +77,7 @@ public class Canvas extends Shape {
 	}
 
 	public void setDirection(String direction) {
-		this.direction = direction.matches("row|column") ? direction : "row";
+		this.direction = direction;
 	}
 
 	public int getMargin() {
@@ -101,7 +85,7 @@ public class Canvas extends Shape {
 	}
 
 	public void setMargin(int margin) {
-		this.margin = (margin < 1) ? 1 : margin;
+		this.margin = margin;
 	}
 
 }
