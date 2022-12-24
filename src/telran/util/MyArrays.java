@@ -32,19 +32,17 @@ public class MyArrays {
 	public static <T> int binarySearch (T[] array, T searchedNumber, Comparator<T> comp) {
 		int left = 0;
 		int right = array.length - 1;
-		int res = 0;
-		while (left <= right) {
-			int middle = (left + right) / 2;
-			if (searchedNumber == array[middle]) {
-				res = middle;
-				right = middle - 1;
-			} else if (comp.compare(searchedNumber, array[middle]) > 0) {
+		int middle = right / 2;
+		while (left <= right && !array[middle].equals(searchedNumber)) {
+			
+			if (comp.compare(searchedNumber, array[middle]) < 0) {
 				right = middle - 1;
 			} else {
 				left = middle + 1;
 			}
+			middle = (left + right) / 2;
 		}
-		return array[res] == searchedNumber ? res : -res - 1;
+		return left > right ? - left - 1 : middle;
 	}
 
 }
