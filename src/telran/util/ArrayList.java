@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 public class ArrayList<T> implements List<T> {
-	static final int DEFAULT_CAPACITY = 8;
+	static final int DEFAULT_CAPACITY = 16;
 	private T[] array;
 	private int size;
 
@@ -31,7 +31,7 @@ public class ArrayList<T> implements List<T> {
 		if (size == array.length) {
 			reallocate();
 		}
-		System.arraycopy(array, index, array, index +1, size() - index);
+		System.arraycopy(array, index, array, index + 1, size() - index);
 		array[index] = element;
 		size++;
 	}
@@ -65,24 +65,21 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
-
-		boolean result = false;
-		int index = 0;
-		for (T element : array) {
-			if (predicate.test(element)) {
-				removeElement(index);
-				result = true;
+		boolean res = false;
+		for (int i = 0; i < size(); i++) {
+			if (predicate.test(get(i))) {
+				removeElement(i--);
+				res = true;
 			}
-			index++;
 		}
-		return result;
+		return res;
 	}
 
 	private void removeElement(int index) {
-		if (index == size()) {
-			array[index] = null;
+		if (index == size() - 1) {
+			set(index, null);
 		} else {
-			System.arraycopy(array, index + 1, array, index, size() - index);
+			System.arraycopy(array, index + 1, array, index, size() - index - 1);
 		}
 		size--;
 	}
@@ -101,50 +98,48 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public boolean contains(T pattern) {
-		boolean result = false;
 		int i = 0;
 
-		while (i < size() && !result) {
-			if (pattern.equals(get(i))) {
-				result = true;
-			}
+		while (i < size() && !pattern.equals(get(i))) {
 			i++;
 		}
-		return result;
+
+		return i < size();
 	}
 
 	@Override
 	public T[] toArray(T[] ar) {
-		// TODO Auto-generated method stub
-		return null;
+		if (ar.length >= size()) {
+			System.arraycopy(array, 0, ar, 0, size());
+		} else {
+			ar = Arrays.copyOf(ar, size());
+			System.arraycopy(array, 0, ar, 0, size());
+		}
+
+		return ar;
 	}
 
 	@Override
 	public int indexOf(T pattern) {
-		int result = -1;
+		int res = -1;
 		int i = 0;
 
-		while (i < size() && result < 0) {
+		while (i < size() && res < 0) {
 			if (pattern.equals(get(i))) {
-				result = i;
+				res = i;
 			}
 			i++;
 		}
-		return result;
+		return res;
 	}
 
 	@Override
 	public int lastIndexOf(T pattern) {
-		int result = -1;
-		int i = size();
-
-		while (i > 0 && result < 0) {
-			if (pattern.equals(get(i))) {
-				result = i;
-			}
+		int i = size() - 1;
+		while (i >= 0 && !pattern.equals(get(i))) {
 			i--;
 		}
-		return result;
+		return i;
 	}
 
 	@Override
@@ -161,7 +156,7 @@ public class ArrayList<T> implements List<T> {
 
 	private void checkIndex(int index) {
 		if (index < 0 || index > size()) {
-			throw new IndexOutOfBoundsException("IndexOutOfBoundsException");
+			throw new IndexOutOfBoundsException();
 		}
 	}
 }
