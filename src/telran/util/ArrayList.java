@@ -1,6 +1,8 @@
 package telran.util;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class ArrayList<T> implements List<T> {
@@ -8,6 +10,26 @@ public class ArrayList<T> implements List<T> {
 	private T[] array;
 	private int size;
 
+	private class ArrayListIterator implements Iterator<T> {
+		int index = 0;
+
+		@Override
+		public boolean hasNext() {
+
+			return index < size;
+		}
+
+		@Override
+		public T next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			return array[index++];
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
 	public ArrayList(int capacity) {
 		array = (T[]) new Object[capacity];
 	}
@@ -148,4 +170,11 @@ public class ArrayList<T> implements List<T> {
 			throw new IndexOutOfBoundsException();
 		}
 	}
+
+	@Override
+	public Iterator<T> iterator() {
+
+		return new ArrayListIterator();
+	}
+
 }

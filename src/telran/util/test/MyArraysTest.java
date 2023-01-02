@@ -29,7 +29,7 @@ class MyArraysTest {
 	}
 
 	@Test
-	@Disabled
+//	@Disabled
 	void evenOddTest() {
 
 		Integer expected[] = { -8, 2, 10, 100, 47, 13, 7, -7 };

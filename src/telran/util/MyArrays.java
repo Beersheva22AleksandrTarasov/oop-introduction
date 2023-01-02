@@ -48,9 +48,9 @@ public class MyArrays {
 	}
 
 	public static <T> T[] filter(T[] array, Predicate<T> predicate) {
-		int countPredicate = getCountPredicate(array, predicate);
+		
 
-		T[] res = Arrays.copyOf(array, countPredicate);
+		T[] res = Arrays.copyOf(array, array.length);
 		int index = 0;
 		for (T element : array) {
 			if (predicate.test(element)) {
@@ -58,19 +58,7 @@ public class MyArrays {
 			}
 		}
 
-		return res;
-	}
-
-	private static <T> int getCountPredicate(T[] array, Predicate<T> predicate) {
-		int res = 0;
-
-		for (T element : array) {
-			if (predicate.test(element)) {
-				res++;
-			}
-		}
-
-		return res;
+		return Arrays.copyOf(res, index);
 	}
 
 	public static <T> T[] removeIf(T[] array, Predicate<T> predicate) {
