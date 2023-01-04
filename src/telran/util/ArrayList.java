@@ -29,6 +29,12 @@ public class ArrayList<T> implements List<T> {
 
 	}
 
+	@Override
+	public Iterator<T> iterator() {
+
+		return new ArrayListIterator();
+	}
+
 	@SuppressWarnings("unchecked")
 	public ArrayList(int capacity) {
 		array = (T[]) new Object[capacity];
@@ -49,7 +55,7 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public void add(int index, T element) {
-		checkIndex(index);
+		checkIndex(index, 0, size);
 		if (size == array.length) {
 			reallocate();
 		}
@@ -79,7 +85,7 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public T remove(int index) {
-		checkIndex(index);
+		checkIndex(index, 0, size);
 		T result = get(index);
 		removeElement(index);
 		return result;
@@ -87,14 +93,17 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
-		boolean result = false;
-		for (int index = 0; index < size; index++) {
-			if (predicate.test(get(index))) {
-				removeElement(index--);
-				result = true;
+		int oldSize = size;
+		int helpIndex = 0;
+		for (int index = 0; index < oldSize; index++) {
+			if (predicate.test(array[index])) {
+				size--;
+			} else {
+				array[helpIndex++] = array[index];
 			}
 		}
-		return result;
+		Arrays.fill(array, size, oldSize, null);
+		return oldSize > size;
 	}
 
 	private void removeElement(int index) {
@@ -116,12 +125,6 @@ public class ArrayList<T> implements List<T> {
 	public int size() {
 
 		return size;
-	}
-
-	@Override
-	public boolean contains(T pattern) {
-
-		return indexOf(pattern) >= 0;
 	}
 
 	@Override
@@ -155,26 +158,14 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public T get(int index) {
-		checkIndex(index);
+		checkIndex(index, 0, size);
 		return array[index];
 	}
 
 	@Override
 	public void set(int index, T element) {
-		checkIndex(index);
+		checkIndex(index, 0, size);
 		array[index] = element;
-	}
-
-	private void checkIndex(int index) {
-		if (index < 0 || index > size) {
-			throw new IndexOutOfBoundsException();
-		}
-	}
-
-	@Override
-	public Iterator<T> iterator() {
-
-		return new ArrayListIterator();
 	}
 
 }
