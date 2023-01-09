@@ -35,6 +35,7 @@ public class ArrayList<T> extends AbstractCollection<T> implements List<T> {
 			}
 			T removed = array[index - 1];
 			ArrayList.this.remove(removed);
+			index--;
 
 			flagNext = false;
 		}
