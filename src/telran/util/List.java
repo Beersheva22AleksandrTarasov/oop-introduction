@@ -1,7 +1,7 @@
 package telran.util;
 
 public interface List<T> extends Collection<T> {
-	
+
 	void add(int index, T element);
 
 	T remove(int index);
@@ -20,7 +20,16 @@ public interface List<T> extends Collection<T> {
 		}
 	}
 
-	@Override
+	default boolean remove(T pattern) {
+		int index = indexOf(pattern);
+		boolean result = index > -1;
+		if (result) {
+			remove(index);
+		}
+		return result;
+
+	}
+
 	default boolean contains(T pattern) {
 
 		return indexOf(pattern) > -1;

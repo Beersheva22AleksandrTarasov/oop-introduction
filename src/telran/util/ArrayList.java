@@ -5,13 +5,13 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
-public class ArrayList<T> implements List<T> {
+public class ArrayList<T> extends AbstractCollection<T> implements List<T> {
 	static final int DEFAULT_CAPACITY = 16;
 	private T[] array;
-	private int size;
 
 	private class ArrayListIterator implements Iterator<T> {
 		int index = 0;
+		boolean flagNext = false;
 
 		@Override
 		public boolean hasNext() {
@@ -24,7 +24,19 @@ public class ArrayList<T> implements List<T> {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
+			flagNext = true;
 			return array[index++];
+		}
+
+		@Override
+		public void remove() {
+			if (!flagNext) {
+				throw new IllegalStateException();
+			}
+			T removed = array[index - 1];
+			ArrayList.this.remove(removed);
+
+			flagNext = false;
 		}
 
 	}
@@ -69,21 +81,6 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	@Override
-	public boolean remove(T pattern) {
-		boolean result = false;
-		int index = 0;
-
-		while (index < size && !result) {
-			if (pattern.equals(get(index))) {
-				removeElement(index);
-				result = true;
-			}
-			index++;
-		}
-		return result;
-	}
-
-	@Override
 	public T remove(int index) {
 		checkIndex(index, 0, size);
 		T result = get(index);
@@ -116,31 +113,9 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	@Override
-	public boolean isEmpty() {
-
-		return size == 0;
-	}
-
-	@Override
-	public int size() {
-
-		return size;
-	}
-
-	@Override
-	public T[] toArray(T[] ar) {
-		if (ar.length < size) {
-			ar = Arrays.copyOf(array, size);
-		}
-		System.arraycopy(array, 0, ar, 0, size);
-		Arrays.fill(ar, size, ar.length, null);
-		return ar;
-	}
-
-	@Override
 	public int indexOf(T pattern) {
 		int index = 0;
-		while (index < size && !pattern.equals(get(index))) {
+		while (index < size && !isEqual(get(index), pattern)) {
 			index++;
 		}
 
@@ -150,7 +125,7 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public int lastIndexOf(T pattern) {
 		int index = size - 1;
-		while (index >= 0 && !pattern.equals(get(index))) {
+		while (index >= 0 && !isEqual(get(index), pattern)) {
 			index--;
 		}
 		return index;
