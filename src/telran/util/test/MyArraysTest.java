@@ -2,11 +2,9 @@ package telran.util.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Predicate;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
