@@ -229,9 +229,7 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		while (stepTwo != null && stepTwo.next != null && !result) {
 			stepOne = stepOne.next;
 			stepTwo = stepTwo.next.next;
-			if (stepOne == stepTwo) {
-				result = true;
-			}
+			result = stepOne == stepTwo;
 		}
 		return result;
 	}

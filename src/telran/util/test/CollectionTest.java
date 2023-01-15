@@ -3,7 +3,6 @@ package telran.util.test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,7 +37,7 @@ public abstract class CollectionTest {
 		Integer[] expected = { 10, 100, -5, 280, 120, 15 };
 		assertTrue(collection.remove((Integer) 134));
 		Arrays.sort(expected);
-		Integer [] actual = collection.toArray(empty);
+		Integer[] actual = collection.toArray(empty);
 		Arrays.sort(actual);
 		assertArrayEquals(expected, actual);
 		assertFalse(collection.remove((Integer) 134));
@@ -78,7 +77,7 @@ public abstract class CollectionTest {
 
 		Arrays.fill(ar, 10);
 		assertTrue(ar == collection.toArray(ar));
-		Arrays.sort(ar,0, collection.size());
+		Arrays.sort(ar, 0, collection.size());
 		Arrays.sort(numbers);
 		for (int i = 0; i < numbers.length; i++) {
 			assertEquals(ar[i], numbers[i]);

@@ -1,6 +1,5 @@
 package telran.util;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -11,36 +10,38 @@ public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 	private float factor;
 
 	private class HashSetIterator implements Iterator<T> {
-		int current = 0;
 		boolean flagNext = false;
-		LinkedList<T> list = new LinkedList<>();
-		T result = null;
-		@SuppressWarnings("unchecked")
-		Iterator<Integer> it = (Iterator<Integer>) list.iterator();
+		int currentIndexTable = 0;
+		int currentIndexList = -1;
+		Iterator<T> listIterator = getNextListIterator();
 
 		@Override
 		public boolean hasNext() {
 
-			return current < size;
+			return currentIndexTable < size;
 		}
 
-		@SuppressWarnings("unchecked")
+		private Iterator<T> getNextListIterator() {
+			do {
+				currentIndexList++;
+
+			} while (currentIndexList < hashTable.length && hashTable[currentIndexList] == null);
+
+			return currentIndexList < hashTable.length ? hashTable[currentIndexList].iterator() : null;
+		}
+
 		@Override
 		public T next() {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
-			while (hashTable[current] != null) {
-
-				if (result == null) {
-					current++;
-					result = (T) it.next();
-
-				}
+			if (!listIterator.hasNext()) {
+				listIterator = getNextListIterator();
 			}
-
+			currentIndexTable++;
 			flagNext = true;
-			return result;
+
+			return listIterator.next();
 		}
 
 		@Override
@@ -48,7 +49,12 @@ public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 			if (!flagNext) {
 				throw new IllegalStateException();
 			}
-			HashSet.this.remove(result);
+			listIterator.remove();
+			if (hashTable[currentIndexList].isEmpty()) {
+				hashTable[currentIndexList] = null;
+			}
+			currentIndexTable--;
+			size--;
 			flagNext = false;
 		}
 	}
@@ -139,26 +145,6 @@ public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 	public Iterator<T> iterator() {
 
 		return new HashSetIterator();
-	}
-
-//	 FIXME The following method is only for initial test
-//	 after HashTableIterator implementation is done the method should be removed
-	@Override
-	public T[] toArray(T[] ar) {
-		if (ar.length < size) {
-			ar = Arrays.copyOf(ar, size);
-		}
-		int index = 0;
-		for (List<T> list : hashTable) {
-			if (list != null) {
-				for (T obj : list) {
-					ar[index++] = obj;
-				}
-			}
-		}
-		Arrays.fill(ar, size(), ar.length, null);
-
-		return ar;
 	}
 
 }
