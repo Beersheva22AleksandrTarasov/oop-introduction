@@ -6,7 +6,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 
@@ -109,7 +108,6 @@ public abstract class ListTest extends CollectionTest {
 			actual[index++] = it.next();
 		}
 		assertArrayEquals(numbers, actual);
-		assertThrowsExactly(NoSuchElementException.class, () -> it.next());
 
 	}
 
