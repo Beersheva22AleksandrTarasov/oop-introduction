@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import telran.util.StandardTreeSet;
 
 public class StandardTreeSetTest extends SortedTest {
-@BeforeEach
+	@BeforeEach
 	@Override
-void setUp() throws Exception {
-	collection = new StandardTreeSet<Integer>();
-	super.setUp();
-}
+	void setUp() throws Exception {
+		collection = new StandardTreeSet<Integer>();
+		super.setUp();
+	}
 }
