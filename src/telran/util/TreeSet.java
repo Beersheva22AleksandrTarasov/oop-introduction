@@ -18,6 +18,8 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 
 	private class TreeSetIterator implements Iterator<T> {
 		Node<T> currentNode = root;
+		Node<T> prev = null;
+		boolean flagNext = false;
 
 		TreeSetIterator() {
 			if (currentNode != null) {
@@ -38,29 +40,21 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 			}
 
 			T result = currentNode.obj;
+			prev = currentNode;
 			currentNode = getNextCurrentNode(currentNode);
-			boolean flagNext = false;
+			flagNext = true;
 			return result;
 
 		}
-
-		private Node<T> getNextCurrentNode(Node<T> current) {
-
-			return current.right == null ? getGreaterParent(current) : getLeastNode(current.right);
-		}
-
-		private Node<T> getGreaterParent(Node<T> current) {
-			while (current.parent != null && current.parent.left != current) {
-				current = current.parent;
+		
+		@Override
+		public void remove() {
+			if (!flagNext) {
+				throw new IllegalStateException();
 			}
-			return current.parent;
-		}
+			TreeSet.this.remove(prev.obj);
 
-		public Node<T> getLeastNode(Node<T> currentNode) {
-			while (currentNode.left != null) {
-				currentNode = currentNode.left;
-			}
-			return currentNode;
+			flagNext = false;
 		}
 
 	}
@@ -75,6 +69,32 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 	@SuppressWarnings("unchecked")
 	public TreeSet() {
 		this((Comparator<T>) Comparator.naturalOrder());
+	}
+
+	private Node<T> getNextCurrentNode(Node<T> current) {
+
+		return current.right == null ? getGreaterParent(current) : getLeastNode(current.right);
+	}
+
+	private Node<T> getGreaterParent(Node<T> current) {
+		while (current.parent != null && current.parent.left != current) {
+			current = current.parent;
+		}
+		return current.parent;
+	}
+
+	public Node<T> getLeastNode(Node<T> currentNode) {
+		while (currentNode.left != null) {
+			currentNode = currentNode.left;
+		}
+		return currentNode;
+	}
+
+	public Node<T> getGreatestNode(Node<T> currentNode) {
+		while (currentNode.right != null) {
+			currentNode = currentNode.right;
+		}
+		return currentNode;
 	}
 
 	@Override
@@ -115,8 +135,47 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 
 	@Override
 	public boolean remove(T pattern) {
-		// Not implemented yet
-		return false;
+		Node<T> current = getNode(pattern);
+		boolean result = false;
+		if (current != null && comp.compare(current.obj, pattern) == 0) {
+			if (current.left != null && current.right != null) {
+				Node<T> node = getLeastNode(current.right);
+				current.obj = node.obj;
+				removeCurrentNode(node);
+			} else {
+				removeCurrentNode(current);
+			}
+			result = true;
+		}
+		return result;
+	}
+
+	private void removeCurrentNode(Node<T> current) {
+		Node<T> currentChild = current.left != null ? current.left : current.right;
+		if (currentChild != null) {
+			currentChild.parent = current.parent;
+		}
+		if (current.parent == null) {
+			removeRoot(currentChild);
+		} else {
+			if (comp.compare(current.obj, current.parent.obj) < 0) {
+				current.parent.left = currentChild;
+			} else {
+				current.parent.right = currentChild;
+			}
+		}
+		current.parent = null;
+		current.left = null;
+		current.right = null;
+		size--;
+	}
+
+	private void removeRoot(Node<T> child) {
+		if (size == 1) {
+			root = null;
+		} else {
+			root = child;
+		}
 	}
 
 	@Override
@@ -134,25 +193,45 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 
 	@Override
 	public T floor(T element) {
-		// TODO Auto-generated method stub
-		return null;
+		Iterator<T> it = iterator();
+		boolean flag = false;
+		T current = null;
+		T prev = null;
+
+		while (!flag && it.hasNext()) {
+			current = it.next();
+			if (comp.compare(current, element) > 0) {
+				flag = true;
+			}
+			if (!flag)
+				prev = current;
+		}
+
+		return prev;
 	}
 
 	@Override
 	public T ceiling(T element) {
-		// TODO Auto-generated method stub
-		return null;
+		Iterator<T> it = iterator();
+		T result = null;
+		T current = null;
+		while (result == null && it.hasNext()) {
+			current = it.next();
+			if (comp.compare(current, element) >= 0) {
+				result = current;
+			}
+		}
+
+		return result;
 	}
 
 	@Override
 	public T first() {
-		// TODO Auto-generated method stub
-		return null;
+		return root != null ? getLeastNode(root).obj : null;
 	}
 
 	@Override
 	public T last() {
-		// TODO Auto-generated method stub
-		return null;
+		return root != null ? getGreatestNode(root).obj : null;
 	}
 }
