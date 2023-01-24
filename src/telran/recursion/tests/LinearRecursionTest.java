@@ -55,8 +55,8 @@ public class LinearRecursionTest {
 	@Test
 	void squareTest() {
 		assertEquals(1, square(1));
-		assertThrowsExactly(IllegalArgumentException.class, () -> square(0));
 		assertEquals(100, square(10));
+		assertEquals(100, square(-10));
 	}
 
 	@Test
@@ -65,13 +65,14 @@ public class LinearRecursionTest {
 		assertEquals(1, power(1000, 0));
 		assertThrowsExactly(IllegalArgumentException.class, () -> power(1000, -1));
 		assertEquals(1000, power(10, 3));
+		assertEquals(-1000, power(-10, 3));
 	}
 
 	@Test
 	void isSubstringTest() {
 		assertTrue(isSubstring("Hello", "lo"));
+		assertTrue(isSubstring("Hello", "Hello"));
 		assertFalse(isSubstring("Hello", "rec"));
-		assertThrowsExactly(IllegalArgumentException.class, () -> isSubstring("Hello", "Helloo"));
-		assertThrowsExactly(IllegalArgumentException.class, () -> isSubstring("Hello", ""));
+		assertFalse(isSubstring("Hello", "elo"));
 	}
 }

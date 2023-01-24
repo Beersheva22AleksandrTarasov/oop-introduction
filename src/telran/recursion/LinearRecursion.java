@@ -42,11 +42,14 @@ public class LinearRecursion {
 	}
 
 	private static int powerStep(int a, int step) {
-		int res = 0;
-		if (step > 0) {
-			res = a + powerStep(a, step - 1);
+		int result = 0;
+		if(step < 0) {
+			result = powerStep(-a, -step);
 		}
-		return res;
+		if (step > 0) {
+			result = a + powerStep(a, step - 1);
+		}
+		return result;
 	}
 
 	static public long sum(int ar[]) {
@@ -63,13 +66,10 @@ public class LinearRecursion {
 	}
 
 	public static long square(int x) {
-		if (x <= 0) {
-			throw new IllegalArgumentException();
-		}
 		long result = 0;
-		if (x == 1) {
-			result = x;
-		} else if (x > 1) {
+		if (x < 0) {
+			result = square(-x);
+		} else if (x > 0) {
 			result = x + x - 1 + square(x - 1);
 		}
 		return result;
@@ -100,27 +100,21 @@ public class LinearRecursion {
 	}
 
 	public static boolean isSubstring(String string, String substr) {
-		if (substr.length() == 0 || substr.length() > string.length()) {
-			throw new IllegalArgumentException();
+		boolean result = false;
+		if (substr.length() <= string.length()) {
+			result = isEqual(string, substr) ? true : isSubstring(string.substring(1), substr);
 		}
-
-		return isSubstring(string, substr, string.length(), substr.length());
+		return result;
 	}
 
-	private static boolean isSubstring(String string, String substr, int stringLength, int substrLength) {
-
-		if (substrLength == 0) {
+	private static boolean isEqual(String string, String substr) {
+		boolean result = false;
+		if (substr.length() == 0) {
 			return true;
-		}
-		if (stringLength > 0) {
-			if (string.charAt(0) == substr.charAt(0)) {
-				return isSubstring(string.substring(1, stringLength), substr.substring(1, substrLength),
-						stringLength - 1, substrLength - 1);
-			}
-
-			return isSubstring(string.substring(1, stringLength), substr, stringLength - 1, substrLength);
+		} else if (string.charAt(0) == substr.charAt(0)) {
+			return isEqual(string.substring(1), substr.substring(1));
 
 		}
-		return false;
+		return result;
 	}
 }
