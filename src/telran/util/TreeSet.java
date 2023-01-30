@@ -46,15 +46,18 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 			return result;
 
 		}
-		
+
 		@Override
 		public void remove() {
 			if (!flagNext) {
 				throw new IllegalStateException();
 			}
-			TreeSet.this.remove(prev.obj);
 
 			flagNext = false;
+			if (isJunction(prev)) {
+				currentNode = prev;
+			}
+			removeNode(prev);
 		}
 
 	}
@@ -138,44 +141,49 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 		Node<T> current = getNode(pattern);
 		boolean result = false;
 		if (current != null && comp.compare(current.obj, pattern) == 0) {
-			if (current.left != null && current.right != null) {
-				Node<T> node = getLeastNode(current.right);
-				current.obj = node.obj;
-				removeCurrentNode(node);
-			} else {
-				removeCurrentNode(current);
-			}
 			result = true;
+			removeNode(current);
 		}
 		return result;
 	}
 
-	private void removeCurrentNode(Node<T> current) {
-		Node<T> currentChild = current.left != null ? current.left : current.right;
-		if (currentChild != null) {
-			currentChild.parent = current.parent;
-		}
-		if (current.parent == null) {
-			removeRoot(currentChild);
+	private void removeNode(Node<T> current) {
+		if (isJunction(current)) {
+			removeNodeJunction(current);
 		} else {
-			if (comp.compare(current.obj, current.parent.obj) < 0) {
-				current.parent.left = currentChild;
-			} else {
-				current.parent.right = currentChild;
-			}
+			removeNodeNonJunction(current);
 		}
-		current.parent = null;
-		current.left = null;
-		current.right = null;
 		size--;
+
 	}
 
-	private void removeRoot(Node<T> child) {
-		if (size == 1) {
-			root = null;
-		} else {
+	private boolean isJunction(Node<T> current) {
+		return current.left != null && current.right != null;
+	}
+
+	private void removeNodeJunction(Node<T> current) {
+		Node<T> substitution = getLeastNode(current.right);
+		current.obj = substitution.obj;
+		removeNodeNonJunction(substitution);
+
+	}
+
+	private void removeNodeNonJunction(Node<T> current) {
+		Node<T> parent = current.parent;
+		Node<T> child = current.left == null ? current.right : current.left;
+		if (parent == null) {
 			root = child;
+		} else {
+			if (parent.left == current) {
+				parent.left = child;
+			} else {
+				parent.right = child;
+			}
 		}
+		if (child != null) {
+			child.parent = parent;
+		}
+
 	}
 
 	@Override
@@ -193,36 +201,25 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 
 	@Override
 	public T floor(T element) {
-		Iterator<T> it = iterator();
-		boolean flag = false;
-		T current = null;
-		T prev = null;
-
-		while (!flag && it.hasNext()) {
-			current = it.next();
-			if (comp.compare(current, element) > 0) {
-				flag = true;
-			}
-			if (!flag)
-				prev = current;
-		}
-
-		return prev;
+		return floorCeiling(element, true);
 	}
 
 	@Override
 	public T ceiling(T element) {
-		Iterator<T> it = iterator();
-		T result = null;
-		T current = null;
-		while (result == null && it.hasNext()) {
-			current = it.next();
-			if (comp.compare(current, element) >= 0) {
-				result = current;
-			}
-		}
+		return floorCeiling(element, false);
+	}
 
-		return result;
+	private T floorCeiling(T element, boolean isFloor) {
+		T res = null;
+		int compRes = 0;
+		Node<T> current = root;
+		while (current != null && (compRes = comp.compare(element, current.obj)) != 0) {
+			if ((compRes < 0 && !isFloor) || (compRes > 0 && isFloor)) {
+				res = current.obj;
+			}
+			current = compRes < 0 ? current.left : current.right;
+		}
+		return current == null ? res : current.obj;
 	}
 
 	@Override
