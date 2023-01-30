@@ -1,17 +1,19 @@
 package telran.util.test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Random;
+import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import telran.util.Sorted;
 
 public abstract class SortedTest extends SetTest {
+	protected static final int N_ELEMNTS = 100000;
+	protected static final int N_RUNS = 10000;
+	private Random gen = new Random();
 	Sorted<Integer> sorted;
 
 	@Override
@@ -65,4 +67,27 @@ public abstract class SortedTest extends SetTest {
 		assertEquals((Integer) 280, sorted.last());
 	}
 
+	@Test
+	@Disabled
+	void performanceTestSortedAdding() {
+		Sorted<Integer> sorted = getSortedCollection();
+		IntStream.range(0, N_ELEMNTS).forEach(i -> sorted.add(i));
+		runPerformanceTest(sorted);
+	}
+
+	protected void runPerformanceTest(Sorted<Integer> sorted) {
+
+		for (int i = 0; i < N_RUNS; i++) {
+			sorted.floor(gen.nextInt());
+		}
+	}
+
+	protected abstract Sorted<Integer> getSortedCollection();
+
+	@Test
+	void performanceTestRandomAdding() {
+		Sorted<Integer> sorted = getSortedCollection();
+		IntStream.range(0, N_ELEMNTS).forEach(i -> sorted.add(gen.nextInt()));
+		runPerformanceTest(sorted);
+	}
 }
