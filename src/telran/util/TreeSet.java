@@ -337,4 +337,10 @@ public class TreeSet<T> extends AbstractCollection<T> implements Sorted<T> {
 		}
 		return res;
 	}
+
+	@Override
+	public T get(T element) {
+		T result = getNode(element).obj;
+		return result != null && result.equals(element) ? result : null;
+	}
 }
